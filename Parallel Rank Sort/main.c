@@ -22,7 +22,7 @@ int main() {
  double openmp_start, openmp_end;
  time_t seq_start, seq_end;
 
- int i, j, tid, my_num, my_place, start, end; 
+ int i, j; 
 
  int arr[arraySize]; //array to be sorted
  int sorted[arraySize];
@@ -68,15 +68,8 @@ int main() {
  omp_set_num_threads(numThreads);
  
  //Rank sort with openmp
- #pragma omp parallel private(i,j,tid,my_num,my_place, start, end)
- {
-  //printf("Hello from thread %d, nthreads %d \n", omp_get_thread_num(), omp_get_num_threads());
-  
-  tid = omp_get_thread_num();
-  start = tid*(arraySize/numThreads);
-  end = start + (arraySize/numThreads);
-  
-  for(i = start; i < end; i++){
+ #pragma omp parallel for private(j)
+  for(i = 0; i < arraySize; i++){
     for(j = 0; j < arraySize; j++){
      if ( arr[j] > arr[i] || ( arr[j] == arr[i] && j < i )  ){
       rank[i]++;
@@ -84,11 +77,13 @@ int main() {
     }
   }
   
-  for(i = start; i < end; i++){
+  
+  
+  for(i = 0; i < arraySize; i++){
    sorted[rank[i]] = arr[i];
   }
   
- }
+
  
  openmp_end = omp_get_wtime();
 	
